@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		
+		<title>Topple Chess</title>
+
+		<link rel="stylesheet" href="chess.css">
+		<link rel="stylesheet" href="scroll.css">
+
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> <!-- jQuery -->
+		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script> <!-- jQuery UI Plugin -->
+		<script src="http://cdn.jsdelivr.net/interact.js/1.2.4/interact.min.js"></script>       <!-- interact.js -->
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="chess.js"></script>        
+		<script src="client.js"></script>
+		
+		<style id="css_template">
+			.half_outline {
+				outline-width: {halfOutline}px;
+			}
+			.side label {
+				/*padding-left: {labelPad}px;*/
+			}
+			#game_board td {
+				border-width: {doubleGap}px;
+			}
+			#game_board.hints_enabled td.possible > div {
+				border-width: {doubleGap}px;
+			}
+			#game_board td {
+				width: {size}px;
+				height: {size}px;
+			}
+			#move_table td {
+				height: {moveTableItemHeight}px;
+			}
+			.side > *:not(:last-child), .side .buttons > .inner > *:not(:last-child) {
+				margin-bottom: {sideMargins}px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<table id="game_board" class="chess hidden"></table>
+
+		<div id="top_wrap" class="flex_center runner chess hidden">
+			<div class="title">Checkmate! Playing to Programming</div>
+		</div>
+		
+		<div id="left_wrap" class="side chess hidden">
+			<div class="flex_center buttons"><div class="inner">
+				<button id="resign_button" class="half_outline" for="resign">Resign</button>
+				<button id="reset_button" class="offline_only half_outline" for="reset">Reset</button>
+				<button id="hints_button" class="toggle half_outline" for="hints">Hints</button>
+				<button id="images_button" class="toggle half_outline" for="images">Images</button>
+				<button id="sac_button" class="offline_only toggle half_outline" for="sacMode">Sacrifice Mode</button>
+			</div></div>
+			<div id="game_info_wrap" class="table">
+				<table id="game_info" class="half_outline">
+					<tr class="header">
+						<td colspan="2">Game Info</td>
+					</tr>
+					<tr>
+						<td>Turn</td>
+						<td class="turn"></td>
+					</tr>
+					<tr>
+						<td>Playing Online?</td>
+						<td class="is_online">nope</td>
+					</tr>
+					<tr>
+						<td>Online Game Code</td>
+						<td class="game_code">N/A</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		
+		<div id="bottom_wrap" class="flex_center runner chess hidden">
+			<div class="credits half_font">Created by<br>Justin M., Harry H., and Jonah L.</div>
+		</div>
+		
+		<div id="right_wrap" class="side chess hidden">
+			<div id="move_table_wrap" class="table half_outline">
+				<table id="move_table">
+					<tr class="header">
+						<td class="number">#</td>
+						<td class="white">White</td>
+						<td class="black">Black</td>
+					</tr>
+				</table>
+			</div>
+			<div id="material_list_wrap" class="table">
+				<table id="material_list_table" class="half_outline">
+					<tr class="header">
+						<td colspan="2">Material List</td>
+					</tr>
+					<tr class="header">
+						<td>White</td>
+						<td>Black</td>
+					</tr>
+					<tr class="area">
+						<td class="white"></td>
+						<td class="black"></td>
+					</tr>
+					<tr class="number">
+						<td class="white">0</td>
+						<td class="black">0</td>
+					</tr>
+				</table>
+			</div>
+			<div id="sac_countdown_wrap" class="table">
+				<table id="sac_countdown" class="half_outline">
+					<tr class="header">
+						<td colspan="3">Sacrifice Countdown</td>
+					</tr>
+					<tr class="white">
+						<td>White</td>
+						<td class="number"></td>
+						<td rowspan="2">moves until next sacrifice</td>
+					</tr>
+					<tr class="black">
+						<td>Black</td>
+						<td class="number"></td>
+					</tr>
+				</table>
+			</div>            
+		</div>
+		
+		<div id="overlay" class="flex_center">
+			<div class="page_wrap" page="1">
+				<div class="page instructions click_continue"><!--instructions--->
+					<h1 class="flex_center">Welcome to Topple Chess!</h1>
+					<div class="main">
+						<p>
+							This is, at its core, a game of Chess. There's just one important difference:
+							a piece must be chosen to be removed from the bossard (sacrificed) every 
+							few turns. The higher the material value, the more turns there are between sacrifices.
+						</p>
+						<p>Simple, right?</p>
+						<h2>How to Play</h2>
+						<ul>
+							<li>Move pieces by dragging them toProgrammingsd spot</li>
+							<li>Sacrifice pieces by right clicking or long pressing on them (without dragging)</li>
+							<li>The colored buttons on the left toggle certain aspects of the game:
+								<ul>
+									<li>Hints - marks on the board showing possible moves, recent moves, etc.</li>
+									<li>Images - turn off to use chess symbols instead of images</li>
+									<li>Sacrifice Mode - turn off to play normal chess</li>
+								</ul>
+							</li>
+							<li>[Online Only] The "game code" is a string of letters, numbers, etc. that is entered by both players to connect and compete.</li>
+						</ul>                   
+					</div>
+				</div>
+				<div class="page mode"> <!-- play offline/online-->
+					<h1 class="flex_center">Ways to Play</h1>
+					<div class="main">
+						<div class="half_width">
+							<h2>Offline</h2>
+							<ul>
+								<li>Play with a friend on the same computer</li>                           
+								<li>All features are enabled</li>
+								<li>Little chance of problems caused by online mode</li>
+							</ul>                        
+						</div>
+						<div class="half_width">
+							<h2>Online</h2>
+							<ul>
+								<li>Play with anyone over the internet</li>
+								<li>Some features restricted to the host player, or the first person to join the game</li>
+								<li>Slight chance for problems to arise due to the nature of the internet (latency, disconnecting, etc.)</li>
+							</ul>                        
+						</div>
+						<div>
+							<div class="half_width">
+								<p><button id="play_offline" class="half_outline">Play Offline</button></p>
+							</div>
+							<div class="half_width">
+								<p><button id="play_online" class="half_outline">Play Online</button></p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="page options online_only"> <!--if online: options-->
+					<h1 class="flex_center">Online Mode Options</h1>
+					<div class="main">
+						<form id="options_form">
+							<p><label>Game Code</label><input type="text" id="game_code" required><button id="randomize_code">Randomize</button></p>
+							<p><button type="submit" id="check_code">Go</button></p>
+							<p class="host hidden"><input type="checkbox" id="sac_mode" checked><label for="sac_mode">Sacrifice Mode</label></p>
+							<p class="host hidden"><button type="submit" id="create_game">Create Game</button></p>
+						</form>
+					</div>
+				</div>
+				<div class="page waiting online_only double_font"> <!--if online: waiting for opponent-->
+					<h1 class="flex_center">Waiting for an opponent...</h1>
+					<p>Be sure to tell them to enter &quot;<span class="game_code">{game_code}</span>&quot;</p>
+				</div>
+				<div class="page game_over double_font"> 
+					<h1 class="flex_center"></h1>
+					<div id="main">
+						<p><span class="winner">{winner_color}</span> wins by <span class="how">{win_condition}</span></p>
+						<h2>What to do next</h2>
+						<p><button id="new_game">New Game</button></p>
+						<p><button id="close_overlay">Examine Board</button></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
