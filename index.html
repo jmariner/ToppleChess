@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		
+
 		<title>Topple Chess</title>
 
 		<link rel="stylesheet" href="chess.css">
@@ -12,9 +12,9 @@
 		<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script> <!-- jQuery UI Plugin -->
 		<script src="http://cdn.jsdelivr.net/interact.js/1.2.4/interact.min.js"></script>       <!-- interact.js -->
 		<script src="/socket.io/socket.io.js"></script>
-		<script src="chess.js"></script>        
+		<script src="chess.js"></script>
 		<script src="client.js"></script>
-		
+
 		<style id="css_template">
 			.half_outline {
 				outline-width: {halfOutline}px;
@@ -47,7 +47,7 @@
 		<div id="top_wrap" class="flex_center runner chess hidden">
 			<div class="title">Checkmate! Playing to Programming</div>
 		</div>
-		
+
 		<div id="left_wrap" class="side chess hidden">
 			<div class="flex_center buttons"><div class="inner">
 				<button id="resign_button" class="half_outline" for="resign">Resign</button>
@@ -76,11 +76,11 @@
 				</table>
 			</div>
 		</div>
-		
+
 		<div id="bottom_wrap" class="flex_center runner chess hidden">
 			<div class="credits half_font">Created by<br>Justin M., Harry H., and Jonah L.</div>
 		</div>
-		
+
 		<div id="right_wrap" class="side chess hidden">
 			<div id="move_table_wrap" class="table half_outline">
 				<table id="move_table">
@@ -125,23 +125,23 @@
 						<td class="number"></td>
 					</tr>
 				</table>
-			</div>            
+			</div>
 		</div>
-		
+
 		<div id="overlay" class="flex_center">
 			<div class="page_wrap" page="1">
-				<div class="page instructions click_continue"><!--instructions--->
+				<div class="page instructions click_continue"><!--instructions-->
 					<h1 class="flex_center">Welcome to Topple Chess!</h1>
 					<div class="main">
 						<p>
 							This is, at its core, a game of Chess. There's just one important difference:
-							a piece must be chosen to be removed from the bossard (sacrificed) every 
+							a piece must be chosen to be removed from the board (sacrificed) every
 							few turns. The higher the material value, the more turns there are between sacrifices.
 						</p>
 						<p>Simple, right?</p>
 						<h2>How to Play</h2>
 						<ul>
-							<li>Move pieces by dragging them toProgrammingsd spot</li>
+							<li>Move pieces by dragging them to the desired spot</li>
 							<li>Sacrifice pieces by right clicking or long pressing on them (without dragging)</li>
 							<li>The colored buttons on the left toggle certain aspects of the game:
 								<ul>
@@ -151,7 +151,7 @@
 								</ul>
 							</li>
 							<li>[Online Only] The "game code" is a string of letters, numbers, etc. that is entered by both players to connect and compete.</li>
-						</ul>                   
+						</ul>
 					</div>
 				</div>
 				<div class="page mode"> <!-- play offline/online-->
@@ -160,10 +160,10 @@
 						<div class="half_width">
 							<h2>Offline</h2>
 							<ul>
-								<li>Play with a friend on the same computer</li>                           
+								<li>Play with a friend on the same computer</li>
 								<li>All features are enabled</li>
 								<li>Little chance of problems caused by online mode</li>
-							</ul>                        
+							</ul>
 						</div>
 						<div class="half_width">
 							<h2>Online</h2>
@@ -171,7 +171,7 @@
 								<li>Play with anyone over the internet</li>
 								<li>Some features restricted to the host player, or the first person to join the game</li>
 								<li>Slight chance for problems to arise due to the nature of the internet (latency, disconnecting, etc.)</li>
-							</ul>                        
+							</ul>
 						</div>
 						<div>
 							<div class="half_width">
@@ -198,7 +198,7 @@
 					<h1 class="flex_center">Waiting for an opponent...</h1>
 					<p>Be sure to tell them to enter &quot;<span class="game_code">{game_code}</span>&quot;</p>
 				</div>
-				<div class="page game_over double_font"> 
+				<div class="page game_over double_font">
 					<h1 class="flex_center"></h1>
 					<div id="main">
 						<p><span class="winner">{winner_color}</span> wins by <span class="how">{win_condition}</span></p>
